@@ -16,7 +16,7 @@ const Login = ({ onLogin }) => {
         );
 
         if (user) {
-            onLogin(user.username);
+            // onLogin(user.username);
             setUsername("");
             setPassword("");
             setErrorMessage("");
