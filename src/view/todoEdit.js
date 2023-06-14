@@ -1,74 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { editTodo } from '../actions/todoAction';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import { editTodo } from "../actions/todoAction";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import "./todo.css";
 const EditTodoScreen = ({ todos, editTodo }) => {
-  const { id } = useParams(); // Access the route parameter 'id'
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const navigate = useNavigate();
+    const { id } = useParams(); // Access the route parameter 'id'
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const navigate = useNavigate();
 
-  console.log('Received todos:', todos);
+    console.log("Received todos:", todos);
 
-  useEffect(() => {
-    // Check if todos is defined and an array
-    if (!Array.isArray(todos)) {
-      console.error('Invalid todos prop:', todos);
-      return;
-    }
-  
-    // Find the todo with the matching id
-    const todo = todos.find((todo) => todo.id === id);
-  
-    // Set the initial values for title and description
-    if (todo) {
-      setTitle(todo.title);
-      setDescription(todo.description);
-    }
-  }, [id, todos]);
+    useEffect(() => {
+        // Check if todos is defined and an array
+        if (!Array.isArray(todos)) {
+            console.error("Invalid todos prop:", todos);
+            return;
+        }
+        const todo = todos.find((todo) => todo.id === Number(id));
+        console.log({ todo });
+        console.log({
+            id,
+            title,
+            description,
+        });
+        if (todo) {
+            setTitle(todo.title);
+            setDescription(todo.description);
+        }
+    }, [id, todos]);
+    console.log(title);
+    console.log(description);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+    const handleSubmit = (event) => {
+        event.preventDefault();
 
-    const updatedTodo = {
-      id,
-      title,
-      description,
+        const updatedTodo = {
+            id,
+            title,
+            description,
+        };
+
+        editTodo(updatedTodo);
+
+        navigate("/dashboard");
     };
 
-    editTodo(updatedTodo);
-
-    navigate('/dashboard');
-  };
-
-  return (
-    <div>
-      <h1>Edit Todo</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Title:
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          Description:
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-        </label>
-        <br />
-        <button type="submit">Update</button>
-      </form>
-    </div>
-  );
+    return (
+        <div className="edit-todo-container">
+            <h1>Edit Todo</h1>
+            <form onSubmit={handleSubmit}>
+                <label>
+                    Title:
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                    />
+                </label>
+                <br />
+                <label>
+                    Description:
+                    <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    />
+                </label>
+                <br />
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    );
 };
 
 const mapStateToProps = (state) => ({
-  todos: state.todos,
+    todos: state.todo.todos,
 });
 
-const mapDispatchToProps = {
-  editTodo,
+const mapDispatchToProps = (dispatch) => {
+    return { editTodo: (id, newTodo) => dispatch(editTodo(id, newTodo)) };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditTodoScreen);

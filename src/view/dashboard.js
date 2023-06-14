@@ -26,41 +26,49 @@
 
 // export default connect(mapStateToProps)(Dashboard);
 
-
 // src/view/Dashboard.js
 
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { fetchTodoList } from '../actions/todoAction';
-import TodoAdd from './todoAdd';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { fetchTodoList } from "../actions/todoAction";
+import TodoAdd from "./todoAdd";
+import TodoList from "./todoList";
+import { logout } from "../actions/userAction";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = ({ todos, fetchTodoList }) => {
-  useEffect(() => {
-    // Fetch the todo list when the component mounts
-    fetchTodoList();
-  }, [fetchTodoList]);
+    console.log(todos, "todos");
+    const navigate = useNavigate();
 
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      <TodoAdd/>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.title}</li>
-        ))}
-      </ul>
-    </div>
-  );
+    useEffect(() => {
+        // Fetch the todo list when the component mounts
+        fetchTodoList();
+    }, [fetchTodoList]);
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
+    return (
+        <div>
+            <h1>Dashboard</h1>
+            <button onClick={handleLogout}>Log out</button>
+            <TodoAdd />
+            <ul>{todos && <TodoList />}</ul>
+        </div>
+    );
 };
 
 const mapStateToProps = (state) => {
-  return {
-    todos: state.todo.todos,
-  };
+    return {
+        todos: state.todo.todos,
+    };
 };
 
 const mapDispatchToProps = {
-  fetchTodoList,
+    fetchTodoList,
+    logout: (dispatch) => {
+        return dispatch(logout());
+    },
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
